@@ -2,16 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private GameObject bombPrefab;
     [SerializeField] private float bombForce = 10f;
     [SerializeField] private float rotateSpeed = 100f;
+    
+    [SerializeField] private Slider bombForceSlider;
+    [SerializeField] private Text bombForceText;
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             ThrowBomb();
         }
@@ -29,5 +33,11 @@ public class PlayerController : MonoBehaviour
         // 爆弾を飛ばす方向はプレイヤーの前方に上方向を加えたベクトル（斜め上に飛ばす）
         Vector3 bombDirection = transform.forward + Vector3.up;
         bomb.GetComponent<Rigidbody>().AddForce((bombDirection) * bombForce, ForceMode.Impulse);
+    }
+    
+    public void OnChangeBombForceSlider()
+    {
+        bombForce = bombForceSlider.value;
+        bombForceText.text = $"威力: {bombForce}";
     }
 }
