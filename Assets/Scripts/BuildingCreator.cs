@@ -2,20 +2,45 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BuildingCreator : MonoBehaviour
 {
     [SerializeField] private GameObject buildingPartPrefab;
     [SerializeField] private GameObject buildingPrefab;
+    [SerializeField] private Text destroyedBuildingCountText;
+    
     private Vector3 _buildingSize = new Vector3(5, 10, 5);
     private Vector3 _buildingPosition = new Vector3(-50, 0, 20);
     
-    
     private List<Building> _buildings = new List<Building>();
+    private int _destroyedBuildingCount = 0;
+    
+    // ------------------------------------------------------------
+    // これはシングルトンパターンといって、インスタンスが1つしか存在しないことを保証するための設計パターンです。
+    // これにより、他のスクリプトからこのスクリプトのインスタンスを取得する際に、
+    // このスクリプトがアタッチされているオブジェクトを探す必要がなくなります。
+    public static BuildingCreator Instance { get; private set; }
+    
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    // ------------------------------------------------------------
+    
 
     private void Start()
     {
+        destroyedBuildingCountText.text = "破壊されたビル: 0/5";
+        
         for (int i = 0; i < 5; i++)
         {
             _buildingPosition.x += Random.Range(10, 20);
@@ -44,5 +69,19 @@ public class BuildingCreator : MonoBehaviour
                 }
             }
         }
+    }
+    
+    public void CheckBuildings()
+    {
+        _destroyedBuildingCount = 0;
+        foreach (var building in _buildings)
+        {
+            if (building.IsDestroyed)
+            {
+                _destroyedBuildingCount++;
+            }
+        }
+        destroyedBuildingCountText.text = $"破壊されたビル: {_destroyedBuildingCount} / {_buildings.Count}";
+        
     }
 }

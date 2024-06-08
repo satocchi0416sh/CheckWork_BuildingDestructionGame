@@ -30,6 +30,7 @@ public class Bomb : MonoBehaviour
                 {
                     building.DestroyBuilding();
                 }
+                BuildingCreator.Instance.CheckBuildings();
             }
         }
     }
